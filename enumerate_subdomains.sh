@@ -2,7 +2,6 @@
 
 WILDCARDS_FILE='wildcards.txt'
 
-# Check if domains.txt exists
 if [ ! -f domains.txt ]; then
     echo "The domains.txt file does not exist. Please create it first."
     exit 1
