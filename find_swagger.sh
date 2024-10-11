@@ -6,7 +6,7 @@ SWAGGER_TEMPLATE="/home/rojo/nuclei-templates/http/exposures/apis/swagger-api.ya
 # Default domains file
 DOMAINS_FILE="domains.txt"
 OUTPUT_FILE="nuclei_swagger_scan.txt"
-URL_FILE="sj_digestable.txt"
+URL_FILE="swagger_endpoints.txt"
 
 # Parse arguments
 while [[ "$#" -gt 0 ]]; do
