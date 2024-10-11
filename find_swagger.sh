@@ -6,6 +6,7 @@ SWAGGER_TEMPLATE="/home/rojo/nuclei-templates/http/exposures/apis/swagger-api.ya
 # Default domains file
 DOMAINS_FILE="domains.txt"
 OUTPUT_FILE="nuclei_swagger_scan.txt"
+URL_FILE="sj_digestable.txt"
 
 # Parse arguments
 while [[ "$#" -gt 0 ]]; do
@@ -27,8 +28,9 @@ if [ ! -f "$DOMAINS_FILE" ]; then
     exit 1
 fi
 
-# Create or clear the output file
+# Create or clear the output files
 > "$OUTPUT_FILE"
+> "$URL_FILE"
 
 # Loop through each domain in the provided file
 while IFS= read -r domain; do
@@ -47,4 +49,7 @@ while IFS= read -r domain; do
     
 done < "$DOMAINS_FILE"
 
-echo "Scan complete."
+# Extract URLs from the scan results and save to sj_digestable.txt
+grep -oP '(?<=info] ).*(?= \[)' "$OUTPUT_FILE" > "$URL_FILE"
+
+echo "Scan complete. URLs saved to $URL_FILE."
