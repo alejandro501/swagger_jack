@@ -1,9 +1,20 @@
 #!/bin/bash
 
-# after binary installation of my script we call it.
-# bbp_domain_scraper --config config.json 
+USE_TOR=false
+if [[ "$1" == "--tor" ]]; then
+    USE_TOR=true
+    # Spin up Tor
+    ./spinup_tor.sh
+fi
 
-# add subdomains from wildcards
 ./check_dependencies.sh
-./enumerate_subdomains.sh
-./find_swagger.sh
+
+if [[ "$USE_TOR" == true ]]; then
+    ./enumerate_subdomains.sh --tor
+    ./find_swagger.sh --tor
+    ./swagger_jacker.sh --tor
+else
+    ./enumerate_subdomains.sh
+    ./find_swagger.sh
+    ./swagger_jacker.sh
+fi
