@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Path to the Nuclei template for Swagger API
-SWAGGER_TEMPLATE="/home/rojo/nuclei-templates/http/exposures/apis/swagger-api.yaml"
+SWAGGER_TEMPLATE="$HOME/nuclei-templates/http/exposures/apis/swagger-api.yaml"
 
 # default file init
 DOMAINS_FILE="domains.txt"
