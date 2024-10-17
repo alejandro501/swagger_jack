@@ -81,7 +81,7 @@ for chunk in domains_chunk_*; do
     grep -oP '(?<=info] ).*(?= \[)' "$CHUNK_OUTPUT_FILE" >> "$URL_FILE"
 
     # Clean up the chunk output file after processing
-    rm "$CHUNK_OUTPUT_FILE"
+    # rm "$CHUNK_OUTPUT_FILE"
 
     # Increment the chunk counter
     ((chunk_number++))

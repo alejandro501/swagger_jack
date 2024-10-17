@@ -50,7 +50,7 @@ elif [[ "$VPS_ROOT" == true ]]; then
     $BASE_PATH/swagger_jacker.sh --vps
 else
     send_discord_message "Enumerating subdomains..."
-    $BASE_PATH/enumerate_subdomains.sh
+    # $BASE_PATH/enumerate_subdomains.sh
     send_discord_message "Finding Swagger..."
     $BASE_PATH/find_swagger.sh
     send_discord_message "Running Swagger Jacker..."
