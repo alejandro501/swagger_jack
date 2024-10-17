@@ -1,10 +1,11 @@
 #!/bin/bash
 
 SWAGGER_TEMPLATE="$HOME/nuclei-templates/http/exposures/apis/swagger-api.yaml"
-
 DOMAINS_FILE="domains.txt"
 OUTPUT_FILE="nuclei_swagger_scan.txt"
 URL_FILE="swagger_endpoints.txt"
+USE_TOR=false
+GOBIN=""
 
 while [[ "$#" -gt 0 ]]; do
     case "$1" in
@@ -42,8 +43,10 @@ fi
 > "$OUTPUT_FILE"
 > "$URL_FILE"
 
-NUCLEI_CMD="${GOBIN}nuclei"
-if [[ -z "$GOBIN" ]]; then
+# Determine the nuclei command based on GOBIN
+if [[ -n "$GOBIN" ]]; then
+    NUCLEI_CMD="${GOBIN}/nuclei"
+else
     NUCLEI_CMD="nuclei"
 fi
 
