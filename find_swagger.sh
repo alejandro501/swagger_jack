@@ -43,24 +43,34 @@ fi
 > "$OUTPUT_FILE"
 > "$URL_FILE"
 
-# Determine the nuclei command based on GOBIN
 if [[ -n "$GOBIN" ]]; then
     NUCLEI_CMD="${GOBIN}/nuclei"
 else
     NUCLEI_CMD="nuclei"
 fi
 
-while IFS= read -r domain; do
-    domain="${domain%/}"
+# Split the domains file into chunks of 5001 lines
+split -l 5001 "$DOMAINS_FILE" domains_chunk_
 
-    if [[ $domain != http* ]]; then
-        domain="https://$domain"
-    fi
+# Process each chunk
+for chunk in domains_chunk_*; do
+    echo "Processing chunk: $chunk"
 
-    echo "Checking $domain"
-    "$NUCLEI_CMD" -list "$DOMAINS_FILE" -t "$SWAGGER_TEMPLATE" -o "$OUTPUT_FILE"
-    
-done < "$DOMAINS_FILE"
+    while IFS= read -r domain; do
+        domain="${domain%/}"
+
+        if [[ $domain != http* ]]; then
+            domain="https://$domain"
+        fi
+
+        echo "Checking $domain"
+        "$NUCLEI_CMD" -list "$chunk" -t "$SWAGGER_TEMPLATE" -o "$OUTPUT_FILE"
+        
+    done < "$chunk"
+
+    # Optionally, remove the chunk file after processing
+    rm "$chunk"
+done
 
 grep -oP '(?<=info] ).*(?= \[)' "$OUTPUT_FILE" > "$URL_FILE"
 
