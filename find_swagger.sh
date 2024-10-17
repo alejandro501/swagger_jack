@@ -1,14 +1,11 @@
 #!/bin/bash
 
-# Path to the Nuclei template for Swagger API
 SWAGGER_TEMPLATE="$HOME/nuclei-templates/http/exposures/apis/swagger-api.yaml"
 
-# default file init
 DOMAINS_FILE="domains.txt"
 OUTPUT_FILE="nuclei_swagger_scan.txt"
 URL_FILE="swagger_endpoints.txt"
 
-# args
 while [[ "$#" -gt 0 ]]; do
     case "$1" in
         --input) 
@@ -19,6 +16,11 @@ while [[ "$#" -gt 0 ]]; do
             USE_TOR=true
             shift
             ;;
+        --vps)
+            SWAGGER_TEMPLATE="/root/hack/nuclei-templates/http/exposures/apis/swagger-api.yaml"
+            GOBIN="/root/go/bin"
+            shift
+            ;;
         *) 
             echo "Unknown parameter passed: $1"
             exit 1
@@ -26,22 +28,24 @@ while [[ "$#" -gt 0 ]]; do
     esac
 done
 
-# Check if the domains file exists
 if [ ! -f "$DOMAINS_FILE" ]; then
     echo "Domains file not found: $DOMAINS_FILE"
     exit 1
 fi
 
-# Set proxy environment variables to use Tor (SOCKS5 proxy) if --tor is specified
 if [[ "$USE_TOR" == true ]]; then
     export https_proxy=socks5://127.0.0.1:9050
     export http_proxy=socks5://127.0.0.1:9050
     echo "Using Tor for Nuclei scans..."
 fi
 
-# Create or clear the output files
 > "$OUTPUT_FILE"
 > "$URL_FILE"
+
+NUCLEI_CMD="${GOBIN}nuclei"
+if [[ -z "$GOBIN" ]]; then
+    NUCLEI_CMD="nuclei"
+fi
 
 while IFS= read -r domain; do
     domain="${domain%/}"
@@ -51,15 +55,12 @@ while IFS= read -r domain; do
     fi
 
     echo "Checking $domain"
-
-    nuclei -list "$DOMAINS_FILE" -t "$SWAGGER_TEMPLATE" -o "$OUTPUT_FILE" -rate-limit-duration 5 -max-host-error 10
+    "$NUCLEI_CMD" -list "$DOMAINS_FILE" -t "$SWAGGER_TEMPLATE" -o "$OUTPUT_FILE"
     
 done < "$DOMAINS_FILE"
 
-# Extract URLs from the scan results and save to swagger_endpoints.txt
 grep -oP '(?<=info] ).*(?= \[)' "$OUTPUT_FILE" > "$URL_FILE"
 
-# Unset proxy variables after completion if used
 if [[ "$USE_TOR" == true ]]; then
     unset https_proxy http_proxy
 fi
