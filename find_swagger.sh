@@ -63,7 +63,7 @@ get_nuclei_command() {
 
 # Function to split the domains file into chunks
 split_domains_file() {
-    split -l 10 "$DOMAINS_FILE" domains_chunk_
+    split -l 501 "$DOMAINS_FILE" domains_chunk_
 }
 
 # Function to process each chunk
