@@ -92,6 +92,15 @@ after_process() {
         unset https_proxy http_proxy
     fi
 
+    # add existing stuff to final file
+    grep -H . "${OUTPUT_FILE}_*" > "${OUTPUT_FILE}.txt"
+
+    # delete chunk output files
+    rm "${OUTPUT_FILE}_*"
+
+for file in "nuclei_swagger_scan_*"; do [ -s "$file" ] || rm "$file"; done
+
+
     echo "Scan complete. Unique URLs saved to $FINAL_URL_FILE."
 }
 
