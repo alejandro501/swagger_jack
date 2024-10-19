@@ -40,7 +40,6 @@ while IFS= read -r url; do
 
     echo "Listing endpoints for: $url"
     "$SJ_CMD" endpoints -u "$url" | anew "$output_file"
-
 done < "$input_file"
 
 if [[ "$USE_TOR" == true ]]; then
